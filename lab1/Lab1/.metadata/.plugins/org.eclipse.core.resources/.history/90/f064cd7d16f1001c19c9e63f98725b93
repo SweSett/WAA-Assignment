@@ -1,0 +1,26 @@
+package lab1;
+import java.util.HashMap;
+import java.util.Map;
+import java.lang.reflect.*;
+
+public class MyInjector {
+	
+	
+	//new Reflections("lab1.package").getTypesAnnotatedWith(MyAutowired.class);
+	
+	
+	private Map<Class,Object> container = new HashMap<>();
+	
+	
+	public void scanForBeans() {
+		
+		//search
+	
+		// put your map
+	}
+	
+	public void scanForAutowired() {
+		// to search autowired class
+	}
+
+}

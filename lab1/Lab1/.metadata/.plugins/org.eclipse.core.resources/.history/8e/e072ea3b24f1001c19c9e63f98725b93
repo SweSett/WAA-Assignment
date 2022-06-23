@@ -1,0 +1,122 @@
+package Test;
+
+import java.io.File;
+2
+import java.io.IOException;
+3
+import java.net.URL;
+4
+import java.util.ArrayList;
+5
+import java.util.Enumeration;
+6
+import java.util.List;
+7
+8
+public class ClassLoaderUtil {
+9
+10
+    /**
+11
+     * Get all the classes for the input package
+12
+     */
+13
+    public static Class<?>[] getClasses(String packageName) throws ClassNotFoundException, IOException {
+14
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+15
+        assert classLoader != null;
+16
+        String path = packageName.replace('.', '/');
+17
+        Enumeration<URL> resources = classLoader.getResources(path);
+18
+        List<File> dirs = new ArrayList<>();
+19
+        while (resources.hasMoreElements()) {
+20
+            URL resource = resources.nextElement();
+21
+            dirs.add(new File(resource.getFile()));
+22
+        }
+23
+        List<Class<?>> classes = new ArrayList<>();
+24
+        for (File directory : dirs) {
+25
+            classes.addAll(findClasses(directory, packageName));
+26
+        }
+27
+        return classes.toArray(new Class[classes.size()]);
+28
+    }
+29
+30
+    /**
+31
+     * Get all the classes for the input package, inside the input directory
+32
+     */
+33
+    public static List<Class<?>> findClasses(File directory, String packageName) throws ClassNotFoundException {
+34
+        List<Class<?>> classes = new ArrayList<>();
+35
+        if (!directory.exists()) {
+36
+            return classes;
+37
+        }
+38
+        File[] files = directory.listFiles();
+39
+        for (File file : files) {
+40
+            if (file.isDirectory()) {
+41
+                assert !file.getName().contains(".");
+42
+                classes.addAll(findClasses(file, packageName + "." + file.getName()));
+43
+            } else if (file.getName().endsWith(".class")) {
+44
+                String className = packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
+45
+                classes.add(Class.forName(className));
+46
+            }
+47
+        }
+48
+        return classes;
+49
+    }
+50
+}
+
+
+Application main class: 
+
+UserAccountApplication.java
+
+Java
+1
+import com.useraccount.di.framework.CustomInjector;
+2
+3
+public class UserAccountApplication {
+4
+5
+    public static void main(String[] args) {
+6
+        CustomInjector.startApplication(UserAccountApplication.class);
+7
+8
+        CustomInjector.getService(UserAccountClientComponent.class).displayUserAccount();
+9
+    }
+10
+}

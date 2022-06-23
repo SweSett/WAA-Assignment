@@ -1,0 +1,86 @@
+package Test;
+
+import java.util.*;
+2
+import java.lang.reflect.Field;
+3
+4
+import com.useraccount.di.framework.CustomInjector;
+5
+import com.useraccount.di.framework.annotations.*;
+6
+7
+public class InjectionUtil {
+8
+9
+    private InjectionUtil() {
+10
+        super();
+11
+    }
+12
+13
+    /**
+14
+     * Perform injection recursively, for each service inside the Client class
+15
+     */
+16
+    public static void autowire(CustomInjector injector, Class<?> classz, Object classInstance)
+17
+            throws InstantiationException, IllegalAccessException {
+18
+        Set<Field> fields = findFields(classz);
+19
+        for (Field field : fields) {
+20
+            String qualifier = field.isAnnotationPresent(CustomQualifier.class)
+21
+                    ? field.getAnnotation(CustomQualifier.class).value()
+22
+                    : null;
+23
+            Object fieldInstance = injector.getBeanInstance(field.getType(), field.getName(), qualifier);
+24
+            field.set(classInstance, fieldInstance);
+25
+            autowire(injector, fieldInstance.getClass(), fieldInstance);
+26
+        }
+27
+    }
+28
+29
+    /**
+30
+     * Get all the fields having CustomAutowired annotation used while declaration
+31
+     */
+32
+    private static Set<Field> findFields(Class<?> classz) {
+33
+        Set<Field> set = new HashSet<>();
+34
+        while (classz != null) {
+35
+            for (Field field : classz.getDeclaredFields()) {
+36
+                if (field.isAnnotationPresent(CustomAutowired.class)) {
+37
+                    field.setAccessible(true);
+38
+                    set.add(field);
+39
+                }
+40
+            }
+41
+            classz = classz.getSuperclass();
+42
+        }
+43
+        return set;
+44
+    }
+45
+}
