@@ -1,13 +1,13 @@
-package edu.miu.springdata1.entity.unidirectional;
+package edu.miu.springdata1.entity.joincolumn;
 
 import lombok.Data;
 
-import javax.persistence.GenerationType;
 import javax.persistence.*;
+
 @Entity
 @Data
-@Table(name="uniaddress")
-public class uniAddress {
+@Table(name="addJoinCol")
+public class addressJoinedColumn {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -17,5 +17,4 @@ public class uniAddress {
     private String city;
 
     private String zip;
-
 }

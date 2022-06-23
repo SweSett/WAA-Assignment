@@ -1,13 +1,14 @@
-package edu.miu.springdata1.entity.unidirectional;
+package edu.miu.springdata1.entity.joinedtable;
 
+import edu.miu.springdata1.entity.bidirectional.biUser;
 import lombok.Data;
 
-import javax.persistence.GenerationType;
 import javax.persistence.*;
+
 @Entity
 @Data
-@Table(name="uniaddress")
-public class uniAddress {
+@Table(name="addressJoin")
+public class AddressJoined {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -18,4 +19,6 @@ public class uniAddress {
 
     private String zip;
 
+    @OneToOne
+    private UserJoined userJoined;
 }
